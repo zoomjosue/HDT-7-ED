@@ -1,50 +1,90 @@
-public class BST<T extends Comparable<T>> {
-    private Node<T> root;
+public class BST<K extends Comparable<K>, V> {
+    private Node<K, V> root;
 
-    private Node<T> addRecursive(Node<T> node, T key, T value){
-        if(node == null){
-            return new Node<T>(key, value);
-        }
-
-        if(value.compareTo(node.value) < 0){
-            node.left = addRecursive(node.left, key, value);
-        } else if(value.compareTo(node.value) > 0){
-            node.right = addRecursive(node.right, key, value);
-        } else {
-            return node;
-        }
-
-        return node;
+    /**
+     * Constructor de la clase BST
+     */
+    public BST() {
+        this.root = null;
     }
 
-    public void add(T key,T value){
-        root = addRecursive(root, key, value);
+    /**
+     * Método para insertar un nuevo nodo en el árbol
+     * @param key
+     * @param valor
+     */
+    public void insertar(K key, V valor) {
+        root = insertarRecursivo(root, key, valor);
     }
 
-    public T search(Node<T> node, T key){
-        if(node == null){
-            return null;
+    /**
+     * Método recursivo para insertar un nuevo nodo en el árbol
+     * @param actual
+     * @param key
+     * @param valor
+     * @return el nodo insertado
+     */
+    private Node<K, V> insertarRecursivo(Node<K, V> actual, K key, V valor) {
+        // Si el árbol está vacío
+        if (actual == null) {
+            return new Node<>(key, valor);
         }
 
-        if(key.compareTo(node.value) == 0){
-            return search(node.left, key);
-        } else if(key.compareTo(node.value) > 0){
-            return search(node.right, key);
-        } else {
-            return node.key;
+        // Recorrer recursivamente el árbol
+        if (key.compareTo(actual.getKey()) < 0) {
+            actual.setLeft(insertarRecursivo(actual.getLeft(), key, valor));
+        } else if (key.compareTo(actual.getKey()) > 0) {
+            actual.setRight(insertarRecursivo(actual.getRight(), key, valor));
         }
 
+        // Devolver el Node sin cambios
+        return actual;
     }
 
-    private void traverseInOrder(Node<T> node){
-        if(node != null){
-            traverseInOrder(node.left);
-            System.out.println("Clave: " + node.key + " Value: " + node.value);
-            traverseInOrder(node.right);
-        }
+    /**
+     * Método para buscar un nodo en el árbol
+     * @param key
+     * @return el valor asociado a la key, o null si no se encuentra
+     */
+    public V buscar(K key) {
+        return buscarRecursivo(root, key);
     }
 
-    
+    /**
+     * Método recursivo para buscar un nodo en el árbol
+     * @param actual
+     * @param key
+     * @return el valor asociado a la key, o null si no se encuentra
+     */
+    private V buscarRecursivo(Node<K, V> actual, K key) {
+        if (actual == null || actual.getKey().compareTo(key) == 0) {
+            return (actual != null) ? actual.getVal() : null;
+        }
 
+        if (key.compareTo(actual.getKey()) < 0) {
+            return buscarRecursivo(actual.getLeft(), key);
+        }
 
+        return buscarRecursivo(actual.getRight(), key);
+    }
+
+    /**
+     * Método para recorrer el árbol en orden
+     * @param root
+     */
+    public void recorridoEnOrden() {
+        recorridoEnOrdenRecursivo(root);
+    }
+
+    /**
+     * Método recursivo para recorrer el árbol en orden
+     * @param root
+     */
+    private void recorridoEnOrdenRecursivo(Node<K, V> root) {
+        if (root != null) {
+            recorridoEnOrdenRecursivo(root.getLeft());
+            System.out.println(root.getVal());
+            recorridoEnOrdenRecursivo(root.getRight());
+        }
+    }
 }
